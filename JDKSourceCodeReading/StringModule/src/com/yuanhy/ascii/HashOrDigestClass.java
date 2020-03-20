@@ -1,6 +1,11 @@
 package com.yuanhy.ascii;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 import org.junit.Test;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 
 /**
  * 哈希算法（Hash）又称摘要算法（Digest），它的作用是：对任意一组输入数据进行计算，得到一个固定长度的输出摘要。
@@ -53,6 +58,46 @@ public class HashOrDigestClass {
      *
      * 后面的160，256，512是指输出长度，单位是bits 位，转换成字节是 bits数/8=字节数  因为 1字节 = 8bit
      * 根据碰撞概率，哈希算法的输出长度越长，就越难产生碰撞，也就越安全。
+     */
+    @Test
+    public void MD5Test(){
+        //利用 MD5 算法创建 MessageDigest 的实例
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            String algorithm = messageDigest.getAlgorithm();
+            Provider provider = messageDigest.getProvider();
+            //update方法表示输入数据
+            messageDigest.update("Hello".getBytes());
+            messageDigest.update("World".getBytes());
+
+            //digest方法表示执行摘要算哈希处理
+            byte[] hash = messageDigest.digest();
+            System.out.println("algorithm:"+algorithm);
+            System.out.println("provider:"+provider);
+            System.out.println(HexBin.encode(hash));
+            /**
+             * 或者直接调用 messageDigest.digest(byte[] input),看下面源码就知道了
+             * public byte[] digest(byte[] input) {
+             *         update(input);
+             *         return digest();
+             *     }
+             *
+             *     里面调用了update(byte[] input),在这里输入数据
+             *
+             */
+        }catch (NoSuchAlgorithmException e){
+
+        }
+
+    }
+
+    /**
+     * 其他的哈希算法跟 MD5 的使用一样，不过这里有个实践就是使用哈希存储口令，
+     * 为避免彩虹表攻击，进行加盐处理，所谓的加盐是增加随机数跟口令一起算哈希
+     * 官方算法名查询：
+     * https://docs.oracle.com/en/java/javase/13/docs/specs/security/standard-names.html#messagedigest-algorithms
+     *
+     *
      */
 
 }
